@@ -15,8 +15,27 @@
 #   list a single document from a collection (queried by one of its json fields)
 
 from pymongo import MongoClient
+import pprint
+import datetime
 
-#mongodb 3.4
-client = MongoClient()
-db = client.primer
-coll = db.dataset
+def main():
+    client = MongoClient()
+    db = client.test_database
+    collection = db.test_collection
+
+    post = {"author": "Mike","text": "My first blog post!","tags": ["mongodb", "python", "pymongo"],"date": datetime.datetime.utcnow()}
+    posts = db.posts
+
+    post_id = posts.insert_one(post).inserted_id
+    print('PostID: ',post_id)
+    print('Collections: ',db.collection_names(include_system_collections=False))
+    pprint.pprint(posts.find_one())
+    pprint.pprint(posts.find_one({"author": "Mike"}))
+    pprint.pprint(posts.find_one({"author": "Jessica"}))
+    pprint.pprint(posts.find_one({"_id": post_id}))
+
+    print('Print all posts in collection')
+    for post in posts.find():
+        pprint.pprint(post)
+
+if __name__ == "__main__": main()
